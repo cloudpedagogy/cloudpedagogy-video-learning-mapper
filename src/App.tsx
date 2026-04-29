@@ -200,9 +200,20 @@ function App() {
     // Audit processes all files
     const audit = runAudit(filesData, config);
     
-    const quartoMd = generateQuarto(activeFile.filename, map, keywords);
+    let finalQuartoMd = generateQuarto(activeFile.filename, map, keywords);
 
-    return { cleanLines, map, keywords, segments, audit, quartoMd };
+    const governanceSection = [];
+    if (config.aiInvolvement) governanceSection.push(`- **AI Involvement:** ${config.aiInvolvement}`);
+    if (config.assumptions) governanceSection.push(`- **Assumptions:** ${config.assumptions}`);
+    if (config.risks) governanceSection.push(`- **Risks/Concerns:** ${config.risks}`);
+    if (config.rationale) governanceSection.push(`- **Rationale:** ${config.rationale}`);
+    if (config.reviewNotes) governanceSection.push(`- **Review Notes:** ${config.reviewNotes}`);
+    
+    if (governanceSection.length > 0) {
+      finalQuartoMd += `\n\n## Capability & Governance Notes\n${governanceSection.join('\n')}\n`;
+    }
+
+    return { cleanLines, map, keywords, segments, audit, quartoMd: finalQuartoMd };
   }, [activeFile, filesData, config]);
 
   return (

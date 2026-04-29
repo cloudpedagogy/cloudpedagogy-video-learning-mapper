@@ -1,0 +1,128 @@
+diff --git a/INSTRUCTIONS.md b/INSTRUCTIONS.md
+index 07e0168..6fb8a86 100644
+--- a/INSTRUCTIONS.md
++++ b/INSTRUCTIONS.md
+@@ -59,3 +59,22 @@ The demo uses WebVTT format for structured timestamps.
+ 2. Define segments
+ 3. Assign themes and learning objectives
+ 4. Review structured mapping
++
++---
++
++## Capability & Governance
++
++**What this tool does:** This tool transforms raw video transcripts into structured, easily reviewed learning objects.
++
++**How capability is developed:** By systematically reviewing and mapping transcripts, users develop their ability to critically evaluate and structure AI-assisted or raw content into effective learning designs.
++
++**How governance is supported:** The configuration panel includes an optional Capability & Governance section. This allows you to document the context of your work directly within the tool.
++
++**Explanation of Optional Fields:**
++- **AI Involvement:** Detail if/how AI was used in creating or reviewing the content.
++- **Assumptions:** Note any underlying assumptions made during the mapping process.
++- **Risks or concerns:** Highlight any potential issues (e.g., bias, privacy, inaccuracies).
++- **Rationale:** Justify the structural choices and themes assigned.
++- **Human review notes:** Record who reviewed the output and any final judgements.
++
++These fields will automatically be appended to your exported Quarto Markdown file if filled out.
+diff --git a/README.md b/README.md
+index 08d9a54..ba822a6 100644
+--- a/README.md
++++ b/README.md
+@@ -84,3 +84,14 @@ This application stores data locally in your browser using localStorage.
+ - No data is sent to any server
+ - Refreshing the page will retain your work
+ - Use "Start Fresh" to reset
++
++---
++
++## Capability and Governance
++
++This tool supports both AI capability development and lightweight governance.
++
++- Capability is developed through structured interaction with real workflows
++- Governance is supported through optional fields that make assumptions, risks, and decisions visible
++
++All governance inputs are optional and designed to support — not constrain — professional judgement.
+diff --git a/src/App.tsx b/src/App.tsx
+index 481705c..5346ec2 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -200,9 +200,20 @@ function App() {
+     // Audit processes all files
+     const audit = runAudit(filesData, config);
+     
+-    const quartoMd = generateQuarto(activeFile.filename, map, keywords);
++    let finalQuartoMd = generateQuarto(activeFile.filename, map, keywords);
++
++    const governanceSection = [];
++    if (config.aiInvolvement) governanceSection.push(`- **AI Involvement:** ${config.aiInvolvement}`);
++    if (config.assumptions) governanceSection.push(`- **Assumptions:** ${config.assumptions}`);
++    if (config.risks) governanceSection.push(`- **Risks/Concerns:** ${config.risks}`);
++    if (config.rationale) governanceSection.push(`- **Rationale:** ${config.rationale}`);
++    if (config.reviewNotes) governanceSection.push(`- **Review Notes:** ${config.reviewNotes}`);
++    
++    if (governanceSection.length > 0) {
++      finalQuartoMd += `\n\n## Capability & Governance Notes\n${governanceSection.join('\n')}\n`;
++    }
+ 
+-    return { cleanLines, map, keywords, segments, audit, quartoMd };
++    return { cleanLines, map, keywords, segments, audit, quartoMd: finalQuartoMd };
+   }, [activeFile, filesData, config]);
+ 
+   return (
+diff --git a/src/components/ConfigPanel.tsx b/src/components/ConfigPanel.tsx
+index 1350563..9265c3f 100644
+--- a/src/components/ConfigPanel.tsx
++++ b/src/components/ConfigPanel.tsx
+@@ -83,6 +83,29 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, setConfig }) =
+           />
+         </div>
+       </div>
++      
++      {/* Lightweight capability and governance layer */}
++      {/* This optional section supports visibility, reflection, and accountability */}
++      {/* without altering the core workflow or introducing constraints. */}
++      <details className="mt-md meta-text" style={{ borderTop: '1px solid var(--color-border)', paddingTop: '12px' }}>
++        <summary style={{ cursor: 'pointer', fontWeight: 500 }}>Capability & Governance Notes (Optional)</summary>
++        <div className="flex-col gap-sm mt-sm">
++          <label className="label">AI Involvement</label>
++          <input type="text" name="aiInvolvement" className="input meta-text" value={config.aiInvolvement || ''} onChange={handleChange} />
++          
++          <label className="label">Assumptions</label>
++          <input type="text" name="assumptions" className="input meta-text" value={config.assumptions || ''} onChange={handleChange} />
++          
++          <label className="label">Risks or concerns</label>
++          <input type="text" name="risks" className="input meta-text" value={config.risks || ''} onChange={handleChange} />
++          
++          <label className="label">Rationale</label>
++          <input type="text" name="rationale" className="input meta-text" value={config.rationale || ''} onChange={handleChange} />
++          
++          <label className="label">Human review notes</label>
++          <input type="text" name="reviewNotes" className="input meta-text" value={config.reviewNotes || ''} onChange={handleChange} />
++        </div>
++      </details>
+     </div>
+   );
+ };
+diff --git a/src/types.ts b/src/types.ts
+index c25baf6..4e7a56b 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -18,6 +18,16 @@ export interface Config {
+   mergeShortLines: boolean;
+   fillerWords: string[];
+   stopwords: string[];
++  aiInvolvement?: string;
++  assumptions?: string;
++  risks?: string;
++  rationale?: string;
++  reviewNotes?: string;
++  supportedCapability?: string;
++  usePattern?: string;
++  humanCheckpoint?: string;
++  reflectionPrompt?: string;
++  nextStep?: string;
+ }
+ 
+ export interface TimeMapSegment {

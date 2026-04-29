@@ -59,3 +59,22 @@ The demo uses WebVTT format for structured timestamps.
 2. Define segments
 3. Assign themes and learning objectives
 4. Review structured mapping
+
+---
+
+## Capability & Governance
+
+**What this tool does:** This tool transforms raw video transcripts into structured, easily reviewed learning objects.
+
+**How capability is developed:** By systematically reviewing and mapping transcripts, users develop their ability to critically evaluate and structure AI-assisted or raw content into effective learning designs.
+
+**How governance is supported:** The configuration panel includes an optional Capability & Governance section. This allows you to document the context of your work directly within the tool.
+
+**Explanation of Optional Fields:**
+- **AI Involvement:** Detail if/how AI was used in creating or reviewing the content.
+- **Assumptions:** Note any underlying assumptions made during the mapping process.
+- **Risks or concerns:** Highlight any potential issues (e.g., bias, privacy, inaccuracies).
+- **Rationale:** Justify the structural choices and themes assigned.
+- **Human review notes:** Record who reviewed the output and any final judgements.
+
+These fields will automatically be appended to your exported Quarto Markdown file if filled out.

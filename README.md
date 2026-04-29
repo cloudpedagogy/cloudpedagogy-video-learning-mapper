@@ -84,3 +84,14 @@ This application stores data locally in your browser using localStorage.
 - No data is sent to any server
 - Refreshing the page will retain your work
 - Use "Start Fresh" to reset
+
+---
+
+## Capability and Governance
+
+This tool supports both AI capability development and lightweight governance.
+
+- Capability is developed through structured interaction with real workflows
+- Governance is supported through optional fields that make assumptions, risks, and decisions visible
+
+All governance inputs are optional and designed to support — not constrain — professional judgement.

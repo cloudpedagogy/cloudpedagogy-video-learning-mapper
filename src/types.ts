@@ -18,6 +18,16 @@ export interface Config {
   mergeShortLines: boolean;
   fillerWords: string[];
   stopwords: string[];
+  aiInvolvement?: string;
+  assumptions?: string;
+  risks?: string;
+  rationale?: string;
+  reviewNotes?: string;
+  supportedCapability?: string;
+  usePattern?: string;
+  humanCheckpoint?: string;
+  reflectionPrompt?: string;
+  nextStep?: string;
 }
 
 export interface TimeMapSegment {
